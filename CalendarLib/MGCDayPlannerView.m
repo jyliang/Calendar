@@ -1168,9 +1168,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 }
 
 - (void)handlePanGesture:(UIPanGestureRecognizer*)gesture
-{
-    CGPoint ptSelf = [gesture locationInView:self];
-    
+{    
     // long press on a cell or an empty space in the view
     if (gesture.state == UIGestureRecognizerStateBegan)
     {
@@ -1193,8 +1191,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
             }
         }
         else {		// an empty space was touched
-            // Do nothing
-        }
+                    }
     }
     // interactive cell was moved
     else if (gesture.state == UIGestureRecognizerStateChanged)
@@ -1290,7 +1287,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 		if (![self.dataSource dayPlannerView:self shouldStartMovingEventOfType:type atIndex:path.item date:date]) {
 			
 			MGCEventCell *cell = (MGCEventCell*)[view cellForItemAtIndexPath:path];
-			[self bounceAnimateCell:cell];
+//			[self bounceAnimateCell:cell];
 			return NO;
 		}
 	}
