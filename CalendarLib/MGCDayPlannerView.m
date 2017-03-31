@@ -42,6 +42,7 @@
 #import "MGCTimeRowsView.h"
 #import "MGCAlignedGeometry.h"
 #import "OSCache.h"
+#import "MGCEventView.h"
 
 
 // used to restrict scrolling to one direction / axis
@@ -154,10 +155,12 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 
 @property (nonatomic) OSCache *dimmedTimeRangesCache;          // cache for dimmed time ranges (indexed by date)
 
+@property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+
 @end
 
 
-@implementation MGCDayPlannerView
+@implementation MGCDayPlannerView 
 
 // readonly properties whose getter's defined are not auto-synthesized
 @synthesize timedEventsView = _timedEventsView;
@@ -863,9 +866,14 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 		
 		[_timedEventsView registerClass:MGCEventCell.class forCellWithReuseIdentifier:EventCellReuseIdentifier];
         [_timedEventsView registerClass:UICollectionReusableView.class forSupplementaryViewOfKind:DimmingViewKind withReuseIdentifier:DimmingViewReuseIdentifier];
-		UILongPressGestureRecognizer *longPress = [UILongPressGestureRecognizer new];
-		[longPress addTarget:self action:@selector(handleLongPress:)];
-		[_timedEventsView addGestureRecognizer:longPress];
+//		UILongPressGestureRecognizer *longPress = [UILongPressGestureRecognizer new];
+//		[longPress addTarget:self action:@selector(handleLongPress:)];
+//		[_timedEventsView addGestureRecognizer:longPress];
+        
+        self.panGesture = [UIPanGestureRecognizer new];
+        [self.panGesture addTarget:self action:@selector(handlePanGesture:)];
+        self.panGesture.delegate = self;
+        [_timedEventsView addGestureRecognizer:self.panGesture];
 		
 		UITapGestureRecognizer *tap = [UITapGestureRecognizer new];
 		[tap addTarget:self action:@selector(handleTap:)];
@@ -1156,79 +1164,78 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 
 - (void)handleLongPress:(UILongPressGestureRecognizer*)gesture
 {
-	CGPoint ptSelf = [gesture locationInView:self];
+    NSLog(@"LONG PRESS NOT SUPPORTED");
+}
 
-	// long press on a cell or an empty space in the view
-	if (gesture.state == UIGestureRecognizerStateBegan)
-	{
-		[self endInteraction]; // in case previous interaction did not end properly
-		
-		[self setUserInteractionEnabled:NO];
-		
-		// where did the gesture start ?
-		UICollectionView *view = (UICollectionView*)gesture.view;
-		MGCEventType type = (view == self.timedEventsView) ? MGCTimedEventType : MGCAllDayEventType;
-		NSIndexPath *path = [view indexPathForItemAtPoint:[gesture locationInView:view]];
-		
-		if (path) {	// a cell was touched
-			if (![self beginMovingEventOfType:type atIndexPath:path]) {
-				gesture.enabled = NO;
-				gesture.enabled = YES;
-			}
-			else {
-				self.interactiveCellTouchPoint = [gesture locationInView:self.interactiveCell];
-			}
-		}
-		else {		// an empty space was touched
-            CGFloat createEventSlotHeight = floor(self.durationForNewTimedEvent * self.hourSlotHeight / 60.0f / 60.0f);
-			NSDate *date = [self dateAtPoint:CGPointMake(ptSelf.x, ptSelf.y - createEventSlotHeight / 2) rounded:YES];
-						
-			if (![self beginCreateEventOfType:type atDate:date]) {
-				gesture.enabled = NO;
-				gesture.enabled = YES;
-			}
-		}
-	}
-	// interactive cell was moved
-	else if (gesture.state == UIGestureRecognizerStateChanged)
-	{
-		[self moveInteractiveCellAtPoint:[gesture locationInView:self]];
-	}
-	// finger was lifted
-	else if (gesture.state == UIGestureRecognizerStateEnded)
-	{
-		[self.dragTimer invalidate];
-		self.dragTimer = nil;
-		//[self scrollViewDidEndScrolling:self.controllingScrollView];
-		
-		NSDate *date = [self dateAtPoint:self.interactiveCell.frame.origin rounded:YES];
+- (void)handlePanGesture:(UIPanGestureRecognizer*)gesture
+{
+    CGPoint ptSelf = [gesture locationInView:self];
+    
+    // long press on a cell or an empty space in the view
+    if (gesture.state == UIGestureRecognizerStateBegan)
+    {
+        [self endInteraction]; // in case previous interaction did not end properly
         
-		if (!self.isInteractiveCellForNewEvent) // existing event
-		{
-			if (!self.acceptsTarget) {
-				[self endInteraction];
-			}
-			else if (date && [self.dataSource respondsToSelector:@selector(dayPlannerView:moveEventOfType:atIndex:date:toType:date:)]) {
-				[self.dataSource dayPlannerView:self moveEventOfType:self.movingEventType atIndex:self.movingEventIndex date:self.movingEventDate toType:self.interactiveCellType date:date];
-			}
-		}
-		else  // new event
-		{
-			if (!self.acceptsTarget) {
-				[self endInteraction];
-			}
-			else if (date && [self.dataSource respondsToSelector:@selector(dayPlannerView:createNewEventOfType:atDate:)]) {
-				[self.dataSource dayPlannerView:self createNewEventOfType:self.interactiveCellType atDate:date];
-			}
-		}
-		
-		[self setUserInteractionEnabled:YES];
-		//[self endInteraction];
-	}
-	else if (gesture.state == UIGestureRecognizerStateCancelled)
-	{
-		[self setUserInteractionEnabled:YES];
-	}
+        [self setUserInteractionEnabled:NO];
+        
+        // where did the gesture start ?
+        UICollectionView *view = (UICollectionView*)gesture.view;
+        MGCEventType type = (view == self.timedEventsView) ? MGCTimedEventType : MGCAllDayEventType;
+        NSIndexPath *path = [view indexPathForItemAtPoint:[gesture locationInView:view]];
+        
+        if (path) {	// a cell was touched
+            if (![self beginMovingEventOfType:type atIndexPath:path]) {
+                gesture.enabled = NO;
+                gesture.enabled = YES;
+            }
+            else {
+                self.interactiveCellTouchPoint = [gesture locationInView:self.interactiveCell];
+            }
+        }
+        else {		// an empty space was touched
+            // Do nothing
+        }
+    }
+    // interactive cell was moved
+    else if (gesture.state == UIGestureRecognizerStateChanged)
+    {
+        [self moveInteractiveCellAtPoint:[gesture locationInView:self]];
+    }
+    // finger was lifted
+    else if (gesture.state == UIGestureRecognizerStateEnded)
+    {
+        [self.dragTimer invalidate];
+        self.dragTimer = nil;
+        //[self scrollViewDidEndScrolling:self.controllingScrollView];
+        
+        NSDate *date = [self dateAtPoint:self.interactiveCell.frame.origin rounded:YES];
+        
+        if (!self.isInteractiveCellForNewEvent) // existing event
+        {
+            if (!self.acceptsTarget) {
+                [self endInteraction];
+            }
+            else if (date && [self.dataSource respondsToSelector:@selector(dayPlannerView:moveEventOfType:atIndex:date:toType:date:)]) {
+                [self.dataSource dayPlannerView:self moveEventOfType:self.movingEventType atIndex:self.movingEventIndex date:self.movingEventDate toType:self.interactiveCellType date:date];
+            }
+        }
+        else  // new event
+        {
+            if (!self.acceptsTarget) {
+                [self endInteraction];
+            }
+            else if (date && [self.dataSource respondsToSelector:@selector(dayPlannerView:createNewEventOfType:atDate:)]) {
+                [self.dataSource dayPlannerView:self createNewEventOfType:self.interactiveCellType atDate:date];
+            }
+        }
+        
+        [self setUserInteractionEnabled:YES];
+        //[self endInteraction];
+    }
+    else if (gesture.state == UIGestureRecognizerStateCancelled)
+    {
+        [self setUserInteractionEnabled:YES];
+    }
 }
 
 - (BOOL)beginCreateEventOfType:(MGCEventType)type atDate:(NSDate*)date
@@ -2406,6 +2413,18 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 {
     CGSize dayColumnSize = self.dayColumnSize;
     return CGSizeMake(dayColumnSize.width, self.bounds.size.height);
+}
+
+#pragma mark - Gesture Recognizer Delegate
+- (BOOL)gestureRecognizerShouldBegin:(UIGestureRecognizer *)gestureRecognizer
+{
+    NSIndexPath *path = [self.timedEventsView indexPathForItemAtPoint:[gestureRecognizer locationInView:self.timedEventsView]];
+    
+    if (path) {	// a cell was touched
+        return YES;
+    } else {
+        return NO;
+    }
 }
 
 @end

@@ -73,7 +73,7 @@ typedef NS_ENUM(NSUInteger, MGCDayPlannerCoveringType) {
  * 
  * The view also displays a bar at the top with full-day events.
  */
-@interface MGCDayPlannerView : UIView
+@interface MGCDayPlannerView : UIView <UIGestureRecognizerDelegate>
 
 /*! 
 	@group Configuring a day planner view
