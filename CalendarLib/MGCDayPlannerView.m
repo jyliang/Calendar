@@ -164,8 +164,6 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
 
-@property (nonatomic, weak) id<DayPlannerViewPanGestureCheckDelegate> panGestureCheckDelegate;
-
 @end
 
 

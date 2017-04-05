@@ -239,6 +239,11 @@ typedef NS_ENUM(NSUInteger, MGCDayPlannerCoveringType) {
 @property (nonatomic, weak) id<MGCDayPlannerViewDataSource> dataSource;
 
 /*!
+	@abstract	The object that provides validation for cell pan gesture
+ */
+@property (nonatomic, weak) id<DayPlannerViewPanGestureCheckDelegate> panGestureCheckDelegate;
+
+/*!
     @abstract   How to handle multiple overlapping events at displaying.
     @discussion `MGCDayPlannerCoveringTypeClassic` is recommended for 2-3 covering events.
                 `MGCDayPlannerCoveringTypeComplex` is recommended for more. The first one tries to maximize the event box sizes. The latter one maximizes the disjunct space by splitting days into columns as neccessary.
