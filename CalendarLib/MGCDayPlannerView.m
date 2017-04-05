@@ -99,13 +99,6 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 @end
 
 
-@protocol DayPlannerViewPanGestureCheckDelegate <NSObject>
-
-- (BOOL)shouldHandlePanGestureForCellAtIndexPath:(NSIndexPath *)indexPath;
-
-@end
-
-
 @interface MGCDayPlannerView () <UICollectionViewDataSource, MGCTimedEventsViewLayoutDelegate, MGCAllDayEventsViewLayoutDelegate, UICollectionViewDelegateFlowLayout, MGCTimeRowsViewDelegate>
 
 // subviews

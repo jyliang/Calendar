@@ -692,3 +692,10 @@ typedef NS_ENUM(NSUInteger, MGCDayPlannerCoveringType) {
 - (void)dayPlannerView:(MGCDayPlannerView*)view didDeselectEventOfType:(MGCEventType)type atIndex:(NSUInteger)index date:(NSDate*)date;
 
 @end
+
+@protocol DayPlannerViewPanGestureCheckDelegate <NSObject>
+
+- (BOOL)shouldHandlePanGestureForCellAtIndexPath:(NSIndexPath *)indexPath;
+
+@end
+
