@@ -99,6 +99,13 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 @end
 
 
+@protocol DayPlannerViewPanGestureCheckDelegate <NSObject>
+
+- (BOOL)shouldHandlePanGestureForCellAtIndexPath:(NSIndexPath *)indexPath;
+
+@end
+
+
 @interface MGCDayPlannerView () <UICollectionViewDataSource, MGCTimedEventsViewLayoutDelegate, MGCAllDayEventsViewLayoutDelegate, UICollectionViewDelegateFlowLayout, MGCTimeRowsViewDelegate>
 
 // subviews
@@ -156,6 +163,8 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 @property (nonatomic) OSCache *dimmedTimeRangesCache;          // cache for dimmed time ranges (indexed by date)
 
 @property (nonatomic, strong) UIPanGestureRecognizer *panGesture;
+
+@property (nonatomic, weak) id<DayPlannerViewPanGestureCheckDelegate> panGestureCheckDelegate;
 
 @end
 
@@ -2418,10 +2427,14 @@ static const CGFloat kMaxHourSlotHeight = 150.;
     NSIndexPath *path = [self.timedEventsView indexPathForItemAtPoint:[gestureRecognizer locationInView:self.timedEventsView]];
     
     if (path) {	// a cell was touched
-        return YES;
+      if (self.panGestureCheckDelegate != nil) {
+        return [self.panGestureCheckDelegate shouldHandlePanGestureForCellAtIndexPath:path];
+      }
+      return YES;
     } else {
         return NO;
     }
 }
+
 
 @end
