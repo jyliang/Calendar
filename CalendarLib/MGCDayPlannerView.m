@@ -1655,10 +1655,10 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 	}
 	
 	// x pos and width are adjusted in order to "hide" left and rigth borders
-	self.allDayEventsBackgroundView.frame = CGRectMake(-1, self.dayHeaderHeight, self.bounds.size.width + 2, allDayEventsViewHeight);
-	if (!self.allDayEventsBackgroundView.superview) {
-		[self addSubview:self.allDayEventsBackgroundView];
-	}
+//	self.allDayEventsBackgroundView.frame = CGRectMake(-1, self.dayHeaderHeight, self.bounds.size.width + 2, allDayEventsViewHeight);
+//	if (!self.allDayEventsBackgroundView.superview) {
+//		[self addSubview:self.allDayEventsBackgroundView];
+//	}
 	
 //	self.dayColumnsView.frame = CGRectMake(self.timeColumnWidth, 0, timedEventsViewWidth, self.bounds.size.height);
 //	if (!self.dayColumnsView.superview) {
