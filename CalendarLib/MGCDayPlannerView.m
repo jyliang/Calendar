@@ -1053,7 +1053,15 @@ static const CGFloat kMaxHourSlotHeight = 150.;
 			MGCEventType type = (view == self.timedEventsView) ? MGCTimedEventType : MGCAllDayEventType;
 			
 			[self selectEventWithDelegate:YES type:type atIndex:path.item date:date];
-		}
+    } else {
+      CGFloat yOffset = pt.y - self.hourSlotHeight / 8;// + view.contentOffset.y;
+      NSDate *date = [self dateAtPoint:CGPointMake(0, yOffset) rounded:true];
+      NSTimeInterval ti = fminf([self timeFromOffset:yOffset rounding:15], 24 * 3600. - 60);
+      date = [self.startDate dateByAddingTimeInterval:ti];
+      if (date != nil) {
+        [self.panGestureCheckDelegate updateStartTimeToDate:date];
+      }
+    }
 	}
 }
 

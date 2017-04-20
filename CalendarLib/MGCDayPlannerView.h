@@ -39,6 +39,7 @@
 @protocol DayPlannerViewPanGestureCheckDelegate <NSObject>
 
 - (BOOL)shouldHandlePanGestureForCellAtIndexPath:(NSIndexPath *)indexPath;
+- (void)updateStartTimeToDate:(NSDate *)date;
 
 @end
 
