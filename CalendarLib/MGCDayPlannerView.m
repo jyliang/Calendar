@@ -1945,6 +1945,7 @@ static const CGFloat kMaxHourSlotHeight = 150.;
         
         return view;
     }
+    return [[UICollectionReusableView alloc] init];
 }
 
 #pragma mark - MGCTimedEventsViewLayoutDelegate
